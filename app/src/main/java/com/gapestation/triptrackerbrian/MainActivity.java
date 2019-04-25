@@ -1,5 +1,6 @@
 package com.gapestation.triptrackerbrian;
 
+import android.app.ProgressDialog;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -74,6 +75,11 @@ public class MainActivity extends AppCompatActivity {
                     user.setPassword(password);
                     user.setProperty("name", name);
 
+                    if(userEmail.contains("@") && userEmail.contains(".") && password.length() >= 6 && password != userEmail) {
+                        final ProgressDialog pDialog = ProgressDialog.show(MainActivity.this,
+                                "Please Wait!",
+                                "Creating a new account...",
+                                true);
                     Backendless.UserService.register(user,
                             new AsyncCallback<BackendlessUser>() {
                                 @Override
@@ -83,20 +89,68 @@ public class MainActivity extends AppCompatActivity {
                                 }
                                 @Override
                                 public void handleFault( BackendlessFault fault ) {
-                                    Log.i(TAG, "Registration failed: " + fault.getMessage());
+                                    warnUser(fault.getMessage());
                                 }
                             } );
+                    pDialog.dismiss();
+                    }
+                    else warnUser(getString(R.string.information_error));
 
                 }
                 else {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                    builder.setMessage(R.string.empty_field_signup_error);
-                    builder.setTitle(R.string.authentication_error_title);
-                    builder.setPositiveButton(android.R.string.ok, null);
-                    AlertDialog dialog = builder.create();
-                    dialog.show();
+                    warnUser(getString(R.string.empty_field_signup_error));
                 }
             }
         });
+
+        mLoginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String userEmail = mEmailEditText.getText().toString();
+                String password = mPasswordEditText.getText().toString();
+                String name = mNameEditText.getText().toString();
+
+                userEmail = userEmail.trim();
+                password = password.trim();
+                name = name.trim();
+
+                if (!userEmail.isEmpty() &&!password.isEmpty() && !name.isEmpty()) {
+                    user.setEmail(userEmail);
+                    user.setPassword(password);
+                    user.setProperty("name", name);
+
+                    final ProgressDialog pDialog = ProgressDialog.show(MainActivity.this,
+                            "Please Wait!",
+                            "Creating a new account...",
+                            true);
+                    Backendless.UserService.login(userEmail, password,
+                            new AsyncCallback<BackendlessUser>() {
+                                @Override
+                                public void handleResponse(BackendlessUser backendlessUser) {
+                                    Log.i(TAG, "Login successful for " +
+                                            backendlessUser.getEmail());
+                                }
+
+                                @Override
+                                public void handleFault(BackendlessFault fault) {
+                                    warnUser(fault.getMessage());
+                                }
+                            });
+                    pDialog.dismiss();
+                }
+                else {
+                    warnUser(getString(R.string.empty_field_signup_error));
+                }
+            }
+        });
+
+    }
+    public void warnUser(String error){
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setMessage(error);
+        builder.setTitle("ERROR!");
+        builder.setPositiveButton(android.R.string.ok, null);
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 }
