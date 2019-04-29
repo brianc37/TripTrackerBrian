@@ -1,6 +1,7 @@
 package com.gapestation.triptrackerbrian;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -93,6 +94,8 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             } );
                     pDialog.dismiss();
+                        Intent intent = new Intent(MainActivity.this, MainActivity.class);
+                        startActivity(intent);
                     }
                     else warnUser(getString(R.string.information_error));
 
@@ -121,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
 
                     final ProgressDialog pDialog = ProgressDialog.show(MainActivity.this,
                             "Please Wait!",
-                            "Creating a new account...",
+                            "Logging in...",
                             true);
                     Backendless.UserService.login(userEmail, password,
                             new AsyncCallback<BackendlessUser>() {
@@ -137,6 +140,8 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             });
                     pDialog.dismiss();
+                    Intent intent = new Intent(MainActivity.this, TripListActivity.class);
+                    startActivity(intent);
                 }
                 else {
                     warnUser(getString(R.string.empty_field_signup_error));
