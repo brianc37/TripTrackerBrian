@@ -16,7 +16,7 @@ import com.backendless.BackendlessUser;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
 
-public class MainActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
     EditText mEmailEditText;
     EditText mPasswordEditText;
     EditText mNameEditText;
@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         mSignUpTextView = (TextView)findViewById(R.id.sign_up_text);
         mSignUpButton = (Button)findViewById(R.id.sign_up_button);
         final BackendlessUser user = new BackendlessUser();
-        final String TAG = MainActivity.class.getName();
+        final String TAG = LoginActivity.class.getName();
 
         mSignUpTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
                     user.setProperty("name", name);
 
                     if(userEmail.contains("@") && userEmail.contains(".") && password.length() >= 6 && password != userEmail) {
-                        final ProgressDialog pDialog = ProgressDialog.show(MainActivity.this,
+                        final ProgressDialog pDialog = ProgressDialog.show(LoginActivity.this,
                                 "Please Wait!",
                                 "Creating a new account...",
                                 true);
@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             } );
                     pDialog.dismiss();
-                        Intent intent = new Intent(MainActivity.this, MainActivity.class);
+                        Intent intent = new Intent(LoginActivity.this, LoginActivity.class);
                         startActivity(intent);
                     }
                     else warnUser(getString(R.string.information_error));
@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
                     user.setPassword(password);
                     user.setProperty("name", name);
 
-                    final ProgressDialog pDialog = ProgressDialog.show(MainActivity.this,
+                    final ProgressDialog pDialog = ProgressDialog.show(LoginActivity.this,
                             "Please Wait!",
                             "Logging in...",
                             true);
@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             });
                     pDialog.dismiss();
-                    Intent intent = new Intent(MainActivity.this, TripListActivity.class);
+                    Intent intent = new Intent(LoginActivity.this, TripListActivity.class);
                     startActivity(intent);
                 }
                 else {
@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
     public void warnUser(String error){
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
         builder.setMessage(error);
         builder.setTitle("ERROR!");
         builder.setPositiveButton(android.R.string.ok, null);

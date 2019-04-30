@@ -8,6 +8,15 @@ public class Trip implements IntentData{
     String mDescription;
     Date mStartDate;
     Date mEndDate;
+
+    public Boolean isShared() {
+        return mShared;
+    }
+
+    public void setShared(Boolean shared) {
+        mShared = shared;
+    }
+
     Boolean mShared;
 
     public String getObjectId() {
