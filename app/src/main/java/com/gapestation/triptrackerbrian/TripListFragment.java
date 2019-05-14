@@ -14,14 +14,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.backendless.Backendless;
+import com.backendless.BackendlessUser;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
+import com.backendless.persistence.DataQueryBuilder;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /*
  * Created by klaidley on 4/13/2015.
@@ -31,6 +35,9 @@ public class TripListFragment extends ListFragment {
     private static final String TAG = "TripListFragment";
     private ArrayList<Trip> mTrips;
     private boolean mPublicView = false;
+    TextView mName;
+    TextView mStartDate;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -39,6 +46,8 @@ public class TripListFragment extends ListFragment {
 
         //get the value of mPublicView from the intent. By default, it will be set to false (the second parameter in the call below)
         mPublicView = getActivity().getIntent().getBooleanExtra(Trip.EXTRA_TRIP_PUBLIC_VIEW, false);
+
+
 
         //set the screen title to either My Trips or Public Trips
         if (mPublicView)
@@ -180,8 +189,12 @@ public class TripListFragment extends ListFragment {
         public View getView(int position, View convertView, ViewGroup parent) {
 
 			// todo: Activity 3.1.4
-            return null;
-		
+            getItem(position);
+            mName = (TextView)convertView.findViewById(R.id.trip_list_item_textName);
+            mStartDate = (TextView)convertView.findViewById(R.id.trip_list_item_textStartDate);
+            mName.setText(Trip.getName());
+            mStartDate.setText((CharSequence) Trip.getStartDate());
+		    return convertView;
         }
     }
 
@@ -194,9 +207,36 @@ public class TripListFragment extends ListFragment {
     private void refreshTripList() {
 
 		// todo: Activity 3.1.4
+        BackendlessUser user = Backendless.UserService.CurrentUser();
+        DataQueryBuilder dq = DataQueryBuilder.create();
+        dq.setWhereClause("ownerId='"+ user.getObjectId()+"'");
+
+        Backendless.Persistence.of(Trip.class).find(dq, new AsyncCallback<List<Trip>>() {
+            @Override
+            public void handleResponse(List<Trip> response) {
+                Log.i(TAG, "refresh success");
+                mTrips.clear();
+                for(int i=0; i<response.size();i++){
+                    mTrips.add(response.get(i));
+                }
+                ((TripAdapter)getListAdapter()).notifyDataSetChanged();
+            }
+
+            @Override
+            public void handleFault(BackendlessFault fault) {
+                Log.i(TAG, "refresh failed"+fault.getMessage());
+            }
+        });
+        getActivity().finish();
 
     }
 
+    @Override
+    public void onResume() {
+        refreshTripList();
+        super.onResume();
+    }
 
 
 }
+

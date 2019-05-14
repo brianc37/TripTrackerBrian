@@ -4,9 +4,9 @@ import java.util.Date;
 
 public class Trip implements IntentData{
     String mObjectId;
-    String mName;
+    static String mName;
     String mDescription;
-    Date mStartDate;
+    static Date mStartDate;
     Date mEndDate;
 
     public Boolean isShared() {
@@ -27,7 +27,7 @@ public class Trip implements IntentData{
         mObjectId = objectId;
     }
 
-    public String getName() {
+    public static String getName() {
         return mName;
     }
 
@@ -43,7 +43,7 @@ public class Trip implements IntentData{
         mDescription = description;
     }
 
-    public Date getStartDate() {
+    public static Date getStartDate() {
         return mStartDate;
     }
 
